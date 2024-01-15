@@ -242,5 +242,8 @@ game:GetService("RunService").Stepped:Connect(function()
 	if nclip == true then
 		LocalPlayer.Character.Head.CanCollide = false
 		LocalPlayer.Character.Torso.CanCollide = false
+	else
+		LocalPlayer.Character.Head.CanCollide = true
+		LocalPlayer.Character.Torso.CanCollide = true
 	end
 end);
