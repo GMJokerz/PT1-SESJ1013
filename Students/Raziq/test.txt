@@ -215,9 +215,9 @@ TP.MouseButton1Down:Connect(function()
 		if kiraa == 17 then
 			kiraa = 1
 		end
+		TextLabel.Text = "Current ".. kiraa
 		Teleport:TeleportPart(workspace["sini".. tostring(kiraa)])
 		kiraa = kiraa + 1
-		TextLabel.Text = "Current ".. kiraa
 	end
 end)
 
