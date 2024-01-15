@@ -6,6 +6,13 @@
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local TP = Instance.new("TextButton")
+local TextLabel = Instance.new("TextLabel")
+local TextBox = Instance.new("TextBox")
+local Set = Instance.new("TextButton")
+local Noclip = Instance.new("TextButton")
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TP = Instance.new("TextButton")
 local pos = {
 	["pos1"] = {-1026.43, 1522.62, 3091.52},
 	["pos2"] = {-5567.81, 1201.44, -130.346},
@@ -40,35 +47,81 @@ local LocalPlayer = Players.LocalPlayer
 local TweenService = game:GetService("TweenService")
 local Teleporting = false
 
-
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local TweenService = game:GetService("TweenService")
-local Teleporting = false
+local nclip = false;
+local rm = getrawmetatable(game)
+local index = rm.__index
+local bv = Instance.new("BoolValue");
+bv.Value = false;
+setreadonly(rm,false)
 
 --Properties:
 
-ScreenGui.Parent = game.CoreGui
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 Frame.Parent = ScreenGui
 Frame.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
 Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 Frame.BorderSizePixel = 0
-Frame.Position = UDim2.new(0.900297642, 0, 0.530303061, 0)
-Frame.Size = UDim2.new(0, 100, 0, 29)
+Frame.Position = UDim2.new(0.899367571, 0, 0.432162553, 0)
+Frame.Size = UDim2.new(0, 100, 0, 207)
 
 TP.Name = "TP"
 TP.Parent = Frame
 TP.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 TP.BorderColor3 = Color3.fromRGB(0, 0, 0)
 TP.BorderSizePixel = 0
-TP.Position = UDim2.new(0.100000001, 0, 0, 0)
-TP.Size = UDim2.new(0, 80, 0, 29)
+TP.Position = UDim2.new(0.100000001, 0, 0.143386915, 0)
+TP.Size = UDim2.new(0, 80, 0, 19)
 TP.Font = Enum.Font.SourceSans
 TP.Text = "TP"
 TP.TextColor3 = Color3.fromRGB(0, 0, 0)
 TP.TextSize = 14.000
+
+TextLabel.Parent = Frame
+TextLabel.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Size = UDim2.new(0, 100, 0, 14)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "Current.."
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextSize = 14.000
+
+TextBox.Parent = Frame
+TextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.BorderSizePixel = 0
+TextBox.Position = UDim2.new(0.100000001, 0, 0.438939482, 0)
+TextBox.Size = UDim2.new(0, 80, 0, 20)
+TextBox.Font = Enum.Font.SourceSans
+TextBox.Text = ""
+TextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextBox.TextSize = 14.000
+
+Set.Name = "Set"
+Set.Parent = Frame
+Set.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Set.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Set.BorderSizePixel = 0
+Set.Position = UDim2.new(0.100000001, 0, 0.280229956, 0)
+Set.Size = UDim2.new(0, 80, 0, 20)
+Set.Font = Enum.Font.SourceSans
+Set.Text = "Set"
+Set.TextColor3 = Color3.fromRGB(0, 0, 0)
+Set.TextSize = 14.000
+
+Noclip.Name = "Noclip"
+Noclip.Parent = Frame
+Noclip.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Noclip.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Noclip.BorderSizePixel = 0
+Noclip.Position = UDim2.new(0.100000001, 0, 0.587831378, 0)
+Noclip.Size = UDim2.new(0, 80, 0, 19)
+Noclip.Font = Enum.Font.SourceSans
+Noclip.Text = "Noclip"
+Noclip.TextColor3 = Color3.fromRGB(0, 0, 0)
+Noclip.TextSize = 14.000
 
 function SeatsFunction() --Seats are annoying while teleporting
 	for i,v in pairs(workspace:GetDescendants()) do
@@ -162,8 +215,32 @@ TP.MouseButton1Down:Connect(function()
 		if kiraa == 17 then
 			kiraa = 1
 		end
-		warn(kiraa)
 		Teleport:TeleportPart(workspace["sini".. tostring(kiraa)])
 		kiraa = kiraa + 1
+		TextLabel.Text = "Current ".. kiraa
 	end
 end)
+
+Set.MouseButton1Down:Connect(function()
+	kiraa = tonumber(TextBox.Text)
+end)
+
+Noclip.MouseButton1Down:Connect(function()
+	nclip = not nclip
+end)
+
+
+rm.__index = function(self,j)
+	if tostring(self) == "Part" and tostring(j) == "Anchored" then
+		return index(bv,"Value")
+	end
+	return index(self,j)
+end
+
+
+game:GetService("RunService").Stepped:Connect(function()
+	if nclip == true then
+		LocalPlayer.Character.Head.CanCollide = false
+		LocalPlayer.Character.Torso.CanCollide = false
+	end
+end);
