@@ -1,0 +1,169 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local TP = Instance.new("TextButton")
+local pos = {
+	["pos1"] = {-1026.43, 1522.62, 3091.52},
+	["pos2"] = {-5567.81, 1201.44, -130.346},
+	["pos3"] = {-2299.03, 1891.15, 1222.41},
+	["pos4"] = {-462.737, 1139.9, 1679.27},
+	["pos5"] = {-2794.43, 1808.06, 107.679},
+	["pos6"] = {-1646.89, 1546.59, -2959.42},
+	["pos7"] = {-4689.05, 1447.73, 3335.15},
+	["pos8"] = {-1496.15, 1421.83, 1012.77},
+	["pos9"] = {-3419.87, 1441.15, 5650.46},
+	["pos10"] = {-3699.21, 1438.72, -410.324},
+	["pos11"] = {-2223.74, 1108.81, 3605.7},
+	["pos12"] = {-5363.82, 955.043, 3492.12},
+	["pos13"] = {-3966.47, 1647.83, -5059.19},
+	["pos14"] = {-3648.62, 2286.98, -6254.24},
+	["pos15"] = {-4028.53, 1919.69, -5360.46},
+	["pos16"] = {-4169.53, 1752.71, -6071.48}
+}
+local kira = 1
+local kiraa = 1
+
+getgenv().Teleport = {}
+
+--//TeleportSettings
+Teleport.Speed = 100
+Teleport.Notifications = true --Set it to false if you don't want notifications
+Teleport.CFrameType = false --Set it to false if you don't want your character rotate when you are teleporting (if you are teleporting a part changing it to false probably better idea)
+
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local Teleporting = false
+
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local TweenService = game:GetService("TweenService")
+local Teleporting = false
+
+--Properties:
+
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(49, 49, 49)
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Frame.BorderSizePixel = 0
+Frame.Position = UDim2.new(0.900297642, 0, 0.530303061, 0)
+Frame.Size = UDim2.new(0, 100, 0, 29)
+
+TP.Name = "TP"
+TP.Parent = Frame
+TP.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TP.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TP.BorderSizePixel = 0
+TP.Position = UDim2.new(0.100000001, 0, 0, 0)
+TP.Size = UDim2.new(0, 80, 0, 29)
+TP.Font = Enum.Font.SourceSans
+TP.Text = "TP"
+TP.TextColor3 = Color3.fromRGB(0, 0, 0)
+TP.TextSize = 14.000
+
+function SeatsFunction() --Seats are annoying while teleporting
+	for i,v in pairs(workspace:GetDescendants()) do
+		if v:IsA("Seat") then
+			v.Disabled = not v.Disabled
+		end
+	end
+end
+
+function FloatFunction() --Credits to Infinite Yield
+	local LocalHRP = LocalPlayer.Character:WaitForChild("HumanoidRootPart", 10) or LocalPlayer.Character:WaitForChild("Torso", 10) --I'm adding torso for R6 Teleport Bypass
+	local Humanoid = LocalPlayer.Character:WaitForChild("Humanoid", 10)
+	local Float = Instance.new('Part')
+	Float.Name = math.random(1,10000)
+	Float.Parent = LocalPlayer.Character
+	Float.Transparency = 1
+	Float.Size = Vector3.new(6,1,6)
+	Float.Anchored = true
+	local FloatValue = -3.5
+	return Float, FloatValue
+end
+
+function Notification(text)
+	if not Teleport.Notifications then
+		return
+	end
+	game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Amnesia Teleport Class", Text = text, Duration = 5})
+end
+
+function Teleport:TeleportPart(part)
+	local LocalHRP = LocalPlayer.Character:WaitForChild("HumanoidRootPart", 10) or LocalPlayer.Character:WaitForChild("Torso", 10) --I'm adding torso for R6 Teleport Bypass
+	local Humanoid = LocalPlayer.Character:WaitForChild("Humanoid", 10)
+	local TargetPart = part
+	local Distance = (LocalHRP.Position - TargetPart.Position).magnitude
+	local Goal = {CFrame = TargetPart.CFrame}
+	if not Teleport.CFrameType then Goal = {CFrame = CFrame.new(TargetPart.Position)}  end
+	local Tween = TweenService:Create(LocalHRP, TweenInfo.new(Distance/Teleport.Speed), Goal)
+	if not Teleporting and Humanoid.Health > 0 then
+		Teleporting = true
+		local Float, FloatValue;
+		local HumanoidLoop = game:GetService("RunService").Stepped:Connect(function()
+			Humanoid:ChangeState("PlatformStanding")
+			if not Float then
+				Float, FloatValue = FloatFunction()
+			end
+			Float.CFrame = LocalHRP.CFrame * CFrame.new(0,FloatValue,0)
+		end)
+		Humanoid.Died:Connect(function()
+			if Tween then
+				Tween:Cancel()
+			end
+			if HumanoidLoop then
+				HumanoidLoop:Disconnect()
+				HumanoidLoop = nil
+				if Float then
+					Float:Destroy()
+					Float = nil
+					FloatValue = nil
+				end
+			end
+			Teleporting = false
+		end)
+		pcall(SeatsFunction)
+		Tween:Play()
+		pcall(Notification, "Teleporting.. it will take " .. math.floor(Distance/Teleport.Speed) .. " seconds")
+		Tween.Completed:Wait()
+		HumanoidLoop:Disconnect()
+		HumanoidLoop = nil
+		pcall(function() if Float then Float:Destroy() Float = nil FloatValue = nil end end) 
+		pcall(SeatsFunction)
+		Teleporting = false
+	else
+		return pcall(Notification, "You are currently teleporting")
+	end
+end
+
+print("Amnesia Teleport Class loaded")
+
+while kira <= 16 do
+	wait()
+	local benda = Instance.new("Part")
+	benda.Name = "sini".. tostring(kira)
+	benda.Parent = workspace
+	benda.Anchored = true
+	benda.Position = Vector3.new(unpack(pos["pos".. tostring(kira)]))
+	kira = kira + 1
+end
+
+TP.MouseButton1Down:Connect(function()
+	if Teleporting == false then
+		if kiraa == 17 then
+			kiraa = 1
+		end
+		warn(kiraa)
+		Teleport:TeleportPart(workspace["sini".. tostring(kiraa)])
+		kiraa = kiraa + 1
+	end
+end)
