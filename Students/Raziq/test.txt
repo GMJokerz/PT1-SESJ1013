@@ -222,7 +222,9 @@ TP.MouseButton1Down:Connect(function()
 end)
 
 Set.MouseButton1Down:Connect(function()
-	kiraa = tonumber(TextBox.Text)
+	if tonumber(TextBox.Text) > 0 and tonumber(TextBox.Text) <= 15 then
+		kiraa = tonumber(TextBox.Text)
+	end
 end)
 
 Noclip.MouseButton1Down:Connect(function()
