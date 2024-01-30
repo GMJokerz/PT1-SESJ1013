@@ -105,6 +105,11 @@ local A = Y.Button({
 			game:GetService("ReplicatedStorage").Msg.DrawFruit:InvokeServer(1)
 			end
 			TextField:SetText("Summoned")
+	elseif Type == "Summon 10 Cosmetics" then
+			for i=1,10 do
+		game:GetService("ReplicatedStorage").Msg.RemoteFunction:InvokeServer("\231\154\174\232\130\164\229\184\129\230\138\189\231\154\174\232\130\164")
+		end
+		TextField:SetText("Summoned")
         elseif Type == "Rejoin" then
         			Teleport()
 
@@ -121,6 +126,7 @@ local D = Y.Dropdown({
         "Start Dataloss",
         "Undo Dataloss",
 	"Summon 10 Fruits",
+	"Summon 10 Cosmetics",
         "Rejoin"
     }
 })
