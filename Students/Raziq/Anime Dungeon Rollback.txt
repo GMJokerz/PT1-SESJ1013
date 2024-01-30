@@ -101,7 +101,9 @@ local A = Y.Button({
 				game:GetService("ReplicatedStorage").ServerMsg.LockEvent:InvokeServer(1064, 1)
                     TextField:SetText("Undone")
 	elseif Type == "Summon 10 Fruits" then
-			game:GetService("ReplicatedStorage").Msg.DrawFruit:InvokeServer(10)
+			for i=1,10 do
+			game:GetService("ReplicatedStorage").Msg.DrawFruit:InvokeServer(1)
+			end
 			TextField:SetText("Summoned")
         elseif Type == "Rejoin" then
         			Teleport()
