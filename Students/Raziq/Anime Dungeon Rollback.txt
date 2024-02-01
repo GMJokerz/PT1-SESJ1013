@@ -70,7 +70,7 @@ function Teleport()
 end
 
 local Material = loadstring(game:HttpGet("https://raw.githubusercontent.com/Kinlei/MaterialLua/master/Module.lua"))()
-
+local berapa = 1
 local X = Material.Load({
     Title = "AFS - tobias020108back.",
     Style = 3,
@@ -100,22 +100,30 @@ local A = Y.Button({
         			 _G.reroll = false
 				game:GetService("ReplicatedStorage").ServerMsg.LockEvent:InvokeServer(1064, 1)
                     TextField:SetText("Undone")
-	elseif Type == "Summon 10 Fruits" then
-			for i=1,10 do
+	elseif Type == "Summon Fruits" then
+			for i=1,berapa do
 			game:GetService("ReplicatedStorage").Msg.DrawFruit:InvokeServer(1)
 			end
 			TextField:SetText("Summoned")
-	elseif Type == "Summon 10 Cosmetics" then
-			for i=1,10 do
+	elseif Type == "Summon Cosmetics" then
+			for i=1,berapa do
 		game:GetService("ReplicatedStorage").Msg.RemoteFunction:InvokeServer("\231\154\174\232\130\164\229\184\129\230\138\189\231\154\174\232\130\164")
 		end
 		TextField:SetText("Summoned")
         elseif Type == "Rejoin" then
         			Teleport()
-
+	elseif Type == "+1" then
+		berapa = berapa + 1
+		Amount:SetText("Amount: ".. berapa)
+	elseif Type == "-1" then
+		if berapa > 1 then
+       			berapa = berapa - 1
+			Amount:SetText("Amount: ".. berapa)
+		end
         end
     end
 })
+
 
 local D = Y.Dropdown({
     Text = "Dataloss Type",
@@ -125,11 +133,30 @@ local D = Y.Dropdown({
     Options = {
         "Start Dataloss",
         "Undo Dataloss",
-	"Summon 10 Fruits",
-	"Summon 10 Cosmetics",
+	"Summon Fruits",
+	"Summon Cosmetics",
         "Rejoin"
     }
 })
+
+local ttolak = Y.Dropdown({
+    Text = "Amount",
+    Callback = function(Value)
+        getgenv().Type = Value
+    end,
+    Options = {
+        "+1",
+        "-1"
+    }
+})
+
+
+getgenv().Amount = Y.TextField({
+    Text = "Amount: ".. berapa,
+    Type = "Default"
+})
+
+
 
 getgenv().TextField = Y.TextField({
     Text = "Status",
